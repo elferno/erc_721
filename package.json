@@ -1,0 +1,13 @@
+{
+  "name": "sol_4_token",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "deploy": "truffle migrate --reset",
+    "test": "truffle test"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
