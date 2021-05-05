@@ -11,7 +11,8 @@ contract('Token', accounts =>
 		Standard	: 'DAPP token v 1.0.0'
 	}
 	const Test = {
-		Transfer	: 100
+		Transfer	: 100,
+		Approve		: 100
 	}
 
 	// at test start
@@ -42,19 +43,89 @@ contract('Token', accounts =>
 
 	it ('transfers token ownership', async () =>
 	{
-		const receipt = await contract.transfer(accounts[1], Test.Transfer, { from: accounts[0] })
-		const balanceOf_0 	 = await contract.balanceOf(accounts[0])
-		const balanceOf_1 	 = await contract.balanceOf(accounts[1])
-		const afterBalance_0 = Await.TotalSupply - Test.Transfer
-		const afterBalance_1 = Test.Transfer
+		// var
+		callData = [ accounts[1], Test.Transfer, {from: accounts[0]} ]
 
-		assert.equal(balanceOf_0.toNumber()		 , afterBalance_0, `balance subtracted`)
-		assert.equal(balanceOf_1.toNumber()		 , afterBalance_1, `balance added`)
+		// returned value
+		const success = await contract.transfer.call(...callData)
+		assert.equal(success, true, `transfer function returns TRUE`)
+
+		// event
+		const receipt = await contract.transfer(...callData)
 
 		assert.equal(receipt.logs.length		 , 1			   , `triggers one event`)
 		assert.equal(receipt.logs[0].event		 , 'Transfer'	   , `should be the "Transfer" event`)
 		assert.equal(receipt.logs[0].args._from  , accounts[0]	   , `account FROM`)
 		assert.equal(receipt.logs[0].args._to 	 , accounts[1]	   , `account TO`)
 		assert.equal(receipt.logs[0].args._value , Test.Transfer   , `tokens transfered`)
+
+		// balances after transfer
+		const balanceOf_0 	 = await contract.balanceOf(accounts[0])
+		const balanceOf_1 	 = await contract.balanceOf(accounts[1])
+		const afterBalance_0 = Await.TotalSupply - Test.Transfer
+		const afterBalance_1 = Test.Transfer
+
+		assert.equal(balanceOf_0.toNumber(), afterBalance_0, `balance subtracted`)
+		assert.equal(balanceOf_1.toNumber(), afterBalance_1, `balance added`)
+	})
+
+	it ('approves tokens for delegated transfer', async () =>
+	{
+		// var
+		const callData = [ accounts[1], Test.Approve, {from: accounts[0]} ]
+
+		// returned value
+		const success = await contract.approve.call(...callData)
+		assert.equal(success, true, `approve function returns TRUE`)
+
+		// event
+		const receipt = await contract.approve(...callData)
+
+		assert.equal(receipt.logs.length		  , 1			   , `triggers one event`)
+		assert.equal(receipt.logs[0].event		  , 'Approval'	   , `should be the "Approval" event`)
+		assert.equal(receipt.logs[0].args._owner  , accounts[0]	   , `account FROM`)
+		assert.equal(receipt.logs[0].args._spender, accounts[1]	   , `account TO`)
+		assert.equal(receipt.logs[0].args._value  , Test.Approve   , `tokens approved`)
+
+		// allowance 
+		const allowance = await contract.allowance(accounts[0], accounts[1])
+		assert.equal(allowance.toNumber(), Test.Approve, `allowance appointed`)
+	})
+
+	it ('handles delegatet transfer', async () =>
+	{
+		// var
+		const account_FROM	  	= accounts[0]
+		const account_TO	  	= accounts[2]
+		const account_SPENDER 	= accounts[1]
+		const callData			= [ account_FROM, account_TO, Test.Approve, {from: account_SPENDER} ]
+
+		const wasBalanceOf_FROM	= await contract.balanceOf(account_FROM)
+
+		// returned value
+		const success = await contract.transferFrom.call(...callData)
+		assert.equal(success, true, `transferFrom function returns TRUE`)
+
+		// event
+		const receipt = await contract.transferFrom(...callData)
+
+		assert.equal(receipt.logs.length		 , 1			   , `triggers one event`)
+		assert.equal(receipt.logs[0].event		 , 'Transfer'	   , `should be the "Transfer" event`)
+		assert.equal(receipt.logs[0].args._from  , account_FROM	   , `account FROM`)
+		assert.equal(receipt.logs[0].args._to 	 , account_TO	   , `account TO`)
+		assert.equal(receipt.logs[0].args._value , Test.Approve    , `tokens transfered`)
+
+		// allowance
+		const allowance = await contract.allowance(account_FROM, account_TO)
+		assert.equal(allowance.toNumber(), 0, `allowance spent`)
+
+		// balances after transferFrom
+		const balanceOf_FROM 	= await contract.balanceOf(account_FROM)
+		const balanceOf_TO 	 	= await contract.balanceOf(account_TO)
+		const afterBalance_FROM = wasBalanceOf_FROM - Test.Approve
+		const afterBalance_TO 	= Test.Approve
+
+		assert.equal(balanceOf_FROM.toNumber(), afterBalance_FROM, `balance subtracted`)
+		assert.equal(balanceOf_TO.toNumber()  , afterBalance_TO  , `balance added`)
 	})
 })
