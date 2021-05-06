@@ -62,10 +62,7 @@ contract TokenSale is DSMath
 	}
 
 	// finish sales
-	function endSale
-	(
-
-	)
+	function endSale ()
 		public
 	{
 		require ( msg.sender == admin, "only ADMIN can finish the sales" );
