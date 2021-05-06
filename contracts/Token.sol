@@ -7,7 +7,8 @@ contract Token
 	string constant public name = "DAPP Token";
 	string constant public symbol = "DAPT";
 	string constant public standard = "DAPP token v 1.0.0";
-	uint256 public totalSupply;
+	uint256 		public totalSupply;
+	address 		public admin;
 
 	mapping (address => uint256) public balanceOf;
 	mapping (address => mapping (address => uint256)) public allowance;
@@ -32,7 +33,7 @@ contract Token
 		uint256 _value
 	) {
 		require (
-			balanceOf[msg.sender] >= _value,
+			_value <= balanceOf[msg.sender],
 			"you haven't enought tokens to commit this operation"
 		);
 		_;
@@ -41,8 +42,9 @@ contract Token
 	// construct
 	constructor (uint256 _initialSupply)
 	{
-		balanceOf [msg.sender] = _initialSupply;
+		admin = msg.sender;
 		totalSupply = _initialSupply;
+		balanceOf [msg.sender] = _initialSupply;
 	}
 
 	// transfer
@@ -85,12 +87,12 @@ contract Token
 		returns (bool success)
 	{
 		require (
-			allowance [_from] [msg.sender] >= _value,
-			"you are not allowed to transfer that amount of tokens from this account"
+			_value <= balanceOf [_from],
+			"requested account has not enough tokens to commit this transfer"
 		);
 		require (
-			balanceOf [_from] >= _value,
-			"requested account has not enough tokens to commit this transfer"
+			_value <= allowance [_from] [msg.sender],
+			"you are not allowed to transfer that amount of tokens from this account"
 		);
 
 		allowance [_from] [msg.sender] -= _value;

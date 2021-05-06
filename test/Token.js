@@ -1,3 +1,4 @@
+/*
 const Token = artifacts.require('Token')
 
 contract('Token', accounts =>
@@ -13,6 +14,11 @@ contract('Token', accounts =>
 	const Test = {
 		Transfer	: 100,
 		Approve		: 100
+	}
+	const handle = promise => {
+		return promise
+			.then(data => [data, null])
+			.catch(err => [null,  err])
 	}
 
 	// at test start
@@ -67,6 +73,11 @@ contract('Token', accounts =>
 
 		assert.equal(balanceOf_0.toNumber(), afterBalance_0, `balance subtracted`)
 		assert.equal(balanceOf_1.toNumber(), afterBalance_1, `balance added`)
+
+		// test reqires
+		const balanceData = [ accounts[1], balanceOf_0 + 1, {from: accounts[0]} ]
+		const [, errorBalance] = await handle(contract.transfer(...balanceData))
+		assert.notEqual(errorBalance, null, "transaction revert since balance is exceeded")
 	})
 
 	it ('approves tokens for delegated transfer', async () =>
@@ -90,6 +101,12 @@ contract('Token', accounts =>
 		// allowance 
 		const allowance = await contract.allowance(accounts[0], accounts[1])
 		assert.equal(allowance.toNumber(), Test.Approve, `allowance appointed`)
+
+		// test reqires
+		const balanceOf_0 = await contract.balanceOf(accounts[0])
+		const balanceData = [ accounts[1], balanceOf_0 + 1, {from: accounts[0]} ]
+		const [, errorBalance] = await handle(contract.approve(...balanceData))
+		assert.notEqual(errorBalance, null, "transaction revert since balance is exceeded")
 	})
 
 	it ('handles delegatet transfer', async () =>
@@ -127,5 +144,15 @@ contract('Token', accounts =>
 
 		assert.equal(balanceOf_FROM.toNumber(), afterBalance_FROM, `balance subtracted`)
 		assert.equal(balanceOf_TO.toNumber()  , afterBalance_TO  , `balance added`)
+
+		// test reqires
+		const balanceData = [account_FROM, account_TO, balanceOf_FROM + 1, {from: account_SPENDER}]
+		const [, errorBalance] = await handle(contract.transferFrom(...balanceData))
+		assert.notEqual(errorBalance, null, "transaction revert since balance is exceeded")
+
+		const approvedData = [account_FROM, account_TO, Test.Approve + 1, {from: account_SPENDER}]
+		const [, errorApproved] = await handle(contract.transferFrom(...approvedData))
+		assert.notEqual(errorApproved, null, "transaction revert since approved balance is exceeded")
 	})
 })
+*/
