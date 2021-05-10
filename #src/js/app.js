@@ -67,11 +67,11 @@ const App = {
 	render: async function ()
 	{
 		// var
+		//await this.contracts.Token.methods.transfer(this.contracts.TokenSale.options.address, 750000).send({ from: this.account })
+
 		const _tokenBalance = await this.contracts.Token.methods.balanceOf(this.account).call()
 
 		const _TokenSellAddress = this.contracts.TokenSale.options.address
-		//await this.contracts.Token.methods.transfer(_TokenSellAddress, 750000).send({ from: this.account })
-
 		const _price 	  = await this.contracts.TokenSale.methods.token_Price().call()
 		const _soldTokens = await this.contracts.TokenSale.methods.token_Sold().call()
 		const _leftTokens = await this.contracts.Token.methods.balanceOf(_TokenSellAddress).call()
