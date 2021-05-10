@@ -59,6 +59,18 @@ p, h1, input {
 
 
 /* header */
+.header-fone {
+	width: 100%;
+	height: 100px;
+
+	background: linear-gradient(to right, var(--violet), var(--blue));
+
+	position: fixed;
+	left: 0;
+	top: 0;
+	z-index: -1;
+}
+
 .header {
 	margin: var(--mm) 0 var(--mm) 0;
 }
@@ -67,7 +79,9 @@ p, h1, input {
 	font: var(--header);
 	text-transform: uppercase;
 	letter-spacing: 1px;
-	color: var(--violet);
+	color: var(--fone);
+	text-shadow: 0 0 3px var(--fone);
+	margin: var(--mm) 0 calc(var(--mm) * 2) 0;
 }
 /* * */
 
@@ -131,14 +145,13 @@ input[type="number"]::-webkit-inner-spin-button {
 	display: inline-flex;
 	vertical-align: top;
 	justify-content: center;
-	align-items: center;
 	background-color: var(--blue);
 	border-radius: var(--rr);
 	border-top-left-radius: 0;
 	border-bottom-left-radius: 0;
 	color: var(--fone);
 	text-transform: uppercase;
-	line-height: 51px;
+	line-height: 49px;
 	letter-spacing: .7px;
 	cursor: pointer;
 }
