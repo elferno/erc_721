@@ -12,8 +12,10 @@ body {
 
 	--violet : #99589e;
 	--blue   : #587c9e;
+	--red   : #9e5858;
 	--light-blue : #a1bcd4;
 	--extra-light-blue : #ceddeb;
+	--extra-light-red : #ebcece;
 	--fone   : #f9f9f9;
 
 	--mmm 	 : 50px;
@@ -54,6 +56,11 @@ p, h1, input {
 	background-color: var(--blue);
 	margin: var(--mm) 0 var(--mm) 0;
 	opacity: .3;
+}
+
+.main-content {
+	opacity: 0;
+	transition: opacity .3s ease-out;
 }
 /* * */
 
@@ -205,6 +212,11 @@ input[type="number"]::-webkit-inner-spin-button {
 	padding: var(--mm);
 	border-radius: var(--rr);
 	background-color: var(--extra-light-blue);
+}
+
+.notice.error {
+	color: var(--red);
+	background-color: var(--extra-light-red);
 }
 /* * */
 
