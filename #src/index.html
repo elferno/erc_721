@@ -32,14 +32,14 @@
 				</div>
 			
 				<div class="purchase">
-					<input type="number" value="1" min="1" pattern="[0-9]"><div class="button">purchase tokens</div>
+					<input class="tokens-to-buy" type="number" value="1" min="1" pattern="[0-9]"><div class="button loading">...</div>
 					<div class="sell-meter">
-						<div></div>
+						<div><u class="sell-meter-fill"></u></div>
 						<aside>TOKENS SOLD: <b class="token-sold">0</b> of <b class="token-total">0</b></aside>
 					</div>
 				</div>
 
-				<div class="notice">
+				<div class="notice" onClick="App.end_SALE()">
 					<b>NOTICE:</b> Lorem ipsum dolor sit amet consectetur adipisicing elit. Exercitationem temporibus cum dolore eius ipsum accusantium tempora ducimus est eum ullam.
 				</div>
 

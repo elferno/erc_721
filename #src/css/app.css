@@ -12,11 +12,11 @@ body {
 
 	--violet : #99589e;
 	--blue   : #587c9e;
-	--red   : #9e5858;
+	--red    : #9e5858;
+	--fone   : #f9f9f9;
 	--light-blue : #a1bcd4;
 	--extra-light-blue : #ceddeb;
-	--extra-light-red : #ebcece;
-	--fone   : #f9f9f9;
+	--extra-light-red  : #ebcece;
 
 	--mmm 	 : 50px;
 	--mm 	 : 30px;
@@ -167,6 +167,12 @@ input[type="number"]::-webkit-inner-spin-button {
 	background-color: var(--violet);
 }
 
+.loading {
+	background-color: var(--extra-light-blue)!important;
+	cursor: default!important;
+	color: var(--blue);
+}
+
 .sell-meter {
 	margin: var(--mm) 0 0 0;
 }
@@ -188,21 +194,21 @@ input[type="number"]::-webkit-inner-spin-button {
 	border: 1px solid var(--light-blue);
 	border-radius: var(--r);
 
+	padding: 1px;
 	margin: 0 0 var(--m) 0;
 
 	position: relative;
 }
 
-.sell-meter div:before {
-	content: '';
-
+.sell-meter-fill {
 	width: 0%;
 	height: 100%;
 
 	display: block;
 
-	position: absolute;
 	background: linear-gradient(to right, var(--blue), var(--violet));
+
+	transition: width 1s ease-out;
 }
 /* * */
 

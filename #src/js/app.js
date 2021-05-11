@@ -2,6 +2,9 @@ const App = {
 	// var
 	web3: null,
 	account: 0x0,
+	tokenPrice: 0,
+	totalTokens: 0,
+	canPurchase: false,
 	contracts: {
 		Token	 : null,
 		TokenSale: null
@@ -18,6 +21,17 @@ const App = {
 		}
 		await this.init_CONTRACT()
 		await this.render()
+		this.subscribe_EVENTS()
+	},
+
+
+	// subscribe to contract events
+	subscribe_EVENTS: function ()
+	{
+		// subscribe for sell event
+		this.contracts.TokenSale.events
+			.Sell({})
+			.on('data', async (event) => { this.render() })
 	},
 
 
@@ -70,7 +84,7 @@ const App = {
 	request_WALLET: function ()
 	{
 		this.id('.main-content').empty()
-		this.id('.main-notice').html('Please require your ETH wallet and than reload the page')
+		this.id('.main-notice').html('Please require your ETH wallet and then reload the page')
 	},
 
 
@@ -83,9 +97,24 @@ const App = {
 		const [_tokenBalance] = await this.handle(this.contracts.Token.methods.balanceOf(this.account).call())
 
 		const _TokenSellAddress = this.contracts.TokenSale.options.address
-		const [_price] = await this.handle(this.contracts.TokenSale.methods.token_Price().call())
+		const [_price] 		= await this.handle(this.contracts.TokenSale.methods.token_Price().call())
 		const [_soldTokens] = await this.handle(this.contracts.TokenSale.methods.token_Sold().call())
 		const [_leftTokens] = await this.handle(this.contracts.Token.methods.balanceOf(_TokenSellAddress).call())
+		const _totalTokens  = +_leftTokens + +_soldTokens
+
+		// we need to transfer initial tokens to TokenSale contract
+		if (_totalTokens === 0) {
+			await this.contracts.Token.methods
+				.transfer(this.contracts.TokenSale.options.address, 7500)
+				.send({ from: this.account })
+
+			this.render()
+		}
+
+
+		// since we've got token price and amount here - save it for future purchasing
+		this.tokenPrice  = _price
+		this.totalTokens = _totalTokens
 
 		if (_tokenBalance === null) {
 			// wallet reqired but not connected to the correct network
@@ -94,16 +123,72 @@ const App = {
 			notice.classList.add('error')
 		} else {
 			// normal page render
+			if (_totalTokens === 0) this.toggle_STATE(false, 'tokens sold out')
+			else this.toggle_STATE(true, 'purchase tokens')
+
 			this.id('.your-account').html(this.account)
 
 			this.id('.token-price').html(_price.toETH())
 			this.id('.token-amount').html(_tokenBalance.toPOI())
 
 			this.id('.token-sold').html(_soldTokens.toPOI())
-			this.id('.token-total').html((+_leftTokens + +_soldTokens).toPOI())
+			this.id('.token-total').html(_totalTokens.toPOI())
+
+			setTimeout(()=> {
+				this.id('.sell-meter-fill').css(`width: ${_soldTokens / _totalTokens * 100}%;`)
+			}, 500)
+
+			this.id('.button').addEventListener('click', () => { this.purchaseTokens() })
 		}
 
 		this.id('.main-content').css('opacity: 1;')
+	},
+
+
+	// purchase tokens
+	purchaseTokens: async function ()
+	{
+		// var
+		const _tokensToBuy = this.id('.tokens-to-buy').val()
+
+		// check for reqirenments
+		if (this.canPurchase === false) {
+			return
+		}
+		if (_tokensToBuy > this.totalTokens) {
+
+			return
+		}
+		
+		// html animation
+		this.toggle_STATE(false, 'purchasing ...')
+
+		// purchase
+		await this.contracts.TokenSale.methods
+			.buyTokens(_tokensToBuy)
+			.send({
+				from  : this.account,
+				value : _tokensToBuy * this.tokenPrice,
+				gas   : 500000
+			})
+	},
+	
+	toggle_STATE: function (_canPurchase, _text = null)
+	{
+		this.canPurchase = _canPurchase
+
+		const button = this.id('.button')
+		button.classList[_canPurchase ? 'remove' : 'add']('loading')
+		if (_text !== null) button.html(_text)
+	},
+
+
+	// end sales
+	end_SALE: function ()
+	{
+		this.contracts.TokenSale.methods
+			.endSale()
+			.send({ from: this.account })
 	},
 
 
