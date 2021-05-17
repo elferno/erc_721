@@ -1,10 +1,5 @@
-const Token = artifacts.require("Token");
-const TokenSale = artifacts.require("TokenSale");
+const MyContract = artifacts.require("MyContract");
 
-module.exports = async function (deployer) {
-  await deployer.deploy(Token, 1000000);
-
-  const token = Token.address;
-  const price = 1000000000000000;
-  await deployer.deploy(TokenSale, token, price);
+module.exports = function (deployer) {
+  deployer.deploy(MyContract);
 };
