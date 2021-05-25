@@ -9,12 +9,15 @@
   "scripts": {
     "deploy": "truffle migrate --reset",
     "server": "lite-server",
+    "node_run": "node #src/server.js",
     "test": "truffle test"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@openzeppelin/contracts": "^4.1.0",
+    "@truffle/hdwallet-provider": "^1.4.0",
     "lite-server": "^2.6.1",
     "web3": "^1.3.5"
   }

@@ -7,21 +7,16 @@ module.exports = {
     }
   },
 
-  mocha: {
-    // timeout: 100000
-  },
+  contracts_directory: "./#src/contracts/",
+  contracts_build_directory: "./#src/abi/",
 
   compilers: {
     solc: {
       version: "0.8.4",
-      // docker: true,        // Use "0.5.1" you've installed locally with docker (default: false)
-      // settings: {          // See the solidity docs for advice about optimization and evmVersion
-      //  optimizer: {
-      //    enabled: false,
-      //    runs: 200
-      //  },
-      //  evmVersion: "byzantium"
-      // }
+      optimizer: {
+        enabled: false,
+        runs: 200
+      }
     }
   },
 

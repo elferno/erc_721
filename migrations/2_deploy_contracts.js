@@ -1,5 +1,5 @@
-const MyContract = artifacts.require("MyContract");
+const ColorBubble = artifacts.require("ColorBubble");
 
 module.exports = function (deployer) {
-  deployer.deploy(MyContract);
+  deployer.deploy(ColorBubble);
 };
