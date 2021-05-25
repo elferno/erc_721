@@ -31,14 +31,8 @@ contract('ColorBubble', accounts =>
 		const mintData = ['FFF', payData]
 		await contract.mint(...mintData)
 
-		await contract.await('F0F', {from: Test.Creator})
-		await contract.emulateReceive(payData)
-
 		const _token_FFF = await contract.colors(0)
-		const _token_F0F = await contract.colors(1)
-
 		console.log(_token_FFF)
-		console.log(_token_F0F)
 
 		assert.equal(name	 , Test.Name	 , 'sets the correct NAME')
 		assert.equal(symbol	 , Test.Symbol	 , 'sets the correct SYMBOL')
