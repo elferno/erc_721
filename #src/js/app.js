@@ -48,8 +48,6 @@ const App = {
 		this.html = {
 			content: this.id('.content'),
 			tokens: this.id('.tokens'),
-			await: this.id('#await'),
-			check_await: this.id('#check_await'),
 			participate: this.id('#participate'),
 		}
 
